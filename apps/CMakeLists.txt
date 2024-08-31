@@ -1,0 +1,10 @@
+file(GLOB_RECURSE apps "${CMAKE_CURRENT_SOURCE_DIR}/*_app.cpp")
+# 遍历apps，提取app的名称，即文件名中_app之前的部分
+foreach(app ${apps})
+    get_filename_component(app_name ${app} NAME_WE)
+    string(REGEX REPLACE "_app$" "" app_name ${app_name})
+    message(STATUS "app_name: ${app_name}")
+    add_executable(${app_name} ${app})
+    target_link_libraries(${app_name} PRIVATE youya)
+    install(TARGETS ${app_name} DESTINATION bin)
+endforeach()
