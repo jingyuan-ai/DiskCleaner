@@ -1,9 +1,9 @@
 #pragma once
 
 #include <iostream>
+#include <glog/logging.h>
 
-namespace youya {
-
-#define LOGI std::cout
-
-}
+#define LOGI LOG(INFO)
+#define LOGW LOG(WARNING)
+#define LOGE LOG(ERROR)
+#define LOGF LOG(FATAL)

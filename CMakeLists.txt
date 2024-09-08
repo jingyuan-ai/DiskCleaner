@@ -17,6 +17,8 @@ set(BUILD_VERSION 0)
 include(${PROJECT_ROOT_DIR}/cmake/version.cmake)
 TAG_VERSION()
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function -Wno-unused-but-set-variable -Wno-unused-value -Wno-unused-local-typedefs -Wno-unused-private-field -g -O3")
+
 # deps
 option(BUILD_DEPS "Use FetchContent download and build dependencies" ON)
 option(BUILD_ABSL "Build and install ABSL" ON)
@@ -29,6 +31,27 @@ if(BUILD_DEPS)
   include(FetchContent)
   set(FETCHCONTENT_QUIET OFF)
   set(extra_builds "")
+  FetchContent_Declare(
+    boost
+    URL "https://github.com/boostorg/boost/releases/download/boost-1.83.0/boost-1.83.0.tar.gz"
+    URL_HASH SHA256=0c6049764e80aa32754acd7d4f179fd5551d8172a83b71532ae093e7384e98da
+    EXCLUDE_FROM_ALL
+  )
+  list(APPEND extra_builds "boost")
+  # fetchcontent gflags
+  FetchContent_Declare(
+    gflags
+    URL "https://github.com/gflags/gflags/archive/refs/tags/v2.2.2.tar.gz"
+    URL_HASH SHA256=34af2f15cf7367513b352bdcd2493ab14ce43692d2dcd9dfc499492966c64dcf
+  )
+  list(APPEND extra_builds "gflags")
+  FetchContent_Declare(
+    glog
+    URL "https://github.com/google/glog/archive/refs/tags/v0.7.1.tar.gz"
+    URL_HASH SHA256=00e4a87e87b7e7612f519a41e491f16623b12423620006f59f5688bfd8d13b08
+  )
+  list(APPEND extra_builds "glog")
+  add_definitions(-DGOOGLE_GLOG_DLL_DECL)
   if (BUILD_ABSL)
     FetchContent_Declare(
       absl
@@ -64,6 +87,7 @@ if(BUILD_DEPS)
   set(ABSL_ENABLE_INSTALL ON)
   set(ABSL_PROPAGATE_CXX_STD ON)
   set(protobuf_BUILD_TESTS OFF)
+  set(BOOST_INCLUDE_LIBRARIES preprocessor spirit)
   set(ABSL_ROOT_DIR ${CMAKE_BINARY_DIR}/_deps/absl-src)
   message("Using FetchContent to download and build dependencies")
   FetchContent_MakeAvailable(${extra_builds})
@@ -72,11 +96,6 @@ if(BUILD_DEPS)
   endif(BUILD_PROTOBUF)
 endif()
 
-# 增加对三方库的include路径
-include_directories(${CMAKE_BINARY_DIR}/_deps/absl-src)
-include_directories(${CMAKE_BINARY_DIR}/_deps/protobuf-src/src)
-include_directories(${CMAKE_BINARY_DIR}/_deps/googletest-src/googletest/include)
-include_directories(${CMAKE_BINARY_DIR}/_deps/googletest-src/googlemock/include)
 # 增加openssl的include路径
 include_directories(${OPENSSL_INCLUDE_DIR})
 

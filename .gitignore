@@ -33,3 +33,9 @@
 
 # Compile dir
 build
+
+# Generated files
+src/config/config.h
+
+# IDE
+.vscode

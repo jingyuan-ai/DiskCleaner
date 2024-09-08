@@ -10,6 +10,7 @@ namespace youya {
 
 // 计算文件的 SHA-256 哈希值
 std::string calculate_file_hash(const std::string& file_path) {
+    std::cout << "calculate_file_hash: " << file_path << std::endl;
     try {
         std::ifstream file(file_path, std::ios::binary);
         if (!file) {
